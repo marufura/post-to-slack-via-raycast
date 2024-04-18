@@ -16,10 +16,10 @@ Slackを読む時間と書く時間を完全に分離します。
 
 ![](assets/readme-1.png)
 
-### git clone (or install extension from raycast)
+### git clone
 
-Raycastのビルドや公開をしていないのでまだ
-ただ任意のフォルダで`git clone`して`npm install && npm run dev`すると動くはず
+任意のフォルダで`git clone`してプロジェクトのルートディレクトリに移動し`npm install && npm run build`をする  
+もしデバッグをしたい場合は`npm run dev`
 
 ### Raycastの初期設定を行う
 
@@ -31,3 +31,9 @@ Raycastのビルドや公開をしていないのでまだ
 - Hotkey割り当てがうまくいかない
 - 投稿後にウィンドウが閉じない
 - argumentsの挙動が微妙
+
+# Documents
+
+- [Raycast API](https://developers.raycast.com/api-reference/)
+- [Slack API](https://api.slack.com/)
+    - [今回使っているメッセージ投稿のAPI](https://api.slack.com/methods/chat.postMessage)

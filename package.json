@@ -34,7 +34,7 @@
     },
     {
       "name": "token",
-      "type": "textfield",
+      "type": "password",
       "required": true,
       "title": "Slack User Token",
       "description": "Configure your slack user token.",
