@@ -16,5 +16,18 @@ Slackを読む時間と書く時間を完全に分離します。
 
 ![](assets/readme-1.png)
 
+### git clone (or install extension from raycast)
+
+Raycastのビルドや公開をしていないのでまだ
+ただ任意のフォルダで`git clone`して`npm install && npm run dev`すると動くはず
+
 ### Raycastの初期設定を行う
 
+上記のtoken, チャンネルIDを入力する
+
+# Issues
+よく分からない問題があるので解決してくれる人募集中です！
+
+- Hotkey割り当てがうまくいかない
+- 投稿後にウィンドウが閉じない
+- argumentsの挙動が微妙
