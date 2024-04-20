@@ -24,19 +24,16 @@ files:write
 
 ### git clone
 
-任意のフォルダで`git clone`してプロジェクトのルートディレクトリに移動し`npm install && npm run build`をする  
-もしデバッグをしたい場合は`npm run dev`
+- 任意のフォルダで`git clone`
+- raycastで`Import Extension`コマンドを実行しプロジェクトのルートディレクトリを追加
+- プロジェクトのルートディレクトリに移動して `npm install && npm run build`
+    - もしデバッグをしたい場合は`npm run dev`
 
 ### Raycastの初期設定を行う
 
-上記のtoken, チャンネルIDを入力する
+raycastで`Post To Slack`と入力  
+コマンドを実行しようとすると上記のtoken, チャンネルIDを設定する画面になるので入力する
 
-# Issues
-よく分からない問題があるので解決してくれる人募集中です！
-
-- Hotkey割り当てがうまくいかない
-- 投稿後にウィンドウが閉じない
-- argumentsの挙動が微妙
 
 # Documents
 
