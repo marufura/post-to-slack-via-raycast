@@ -1,17 +1,19 @@
-import { Form, ActionPanel, Action, Toast, showToast } from "@raycast/api";
-import { closeMainWindow, popToRoot, getPreferenceValues } from "@raycast/api";
 import { useState } from "react";
-import { WebClient } from '@slack/web-api';
 import fs from "fs";
+
+import { Form, ActionPanel, Action, Toast, showToast, closeMainWindow, popToRoot, getPreferenceValues, Clipboard, openExtensionPreferences } from "@raycast/api";
+import { WebClient } from '@slack/web-api';
 
 interface Preferences {
   token: string;
   channelId: string;
+  threadTs: string;
 }
 
 type FormValues = {
   message: string;
   attachedLink: string;
+  shouldThreadTsCopy: boolean;
   files: string[];
 };
 
@@ -30,8 +32,7 @@ export default function Command() {
 
   async function handleSubmit(values: FormValues) {
 
-    // 
-    if(values.message == ""){
+    if (values.message == "") {
       await showToast({
         style: Toast.Style.Failure,
         title: "ERROR: ",
@@ -42,7 +43,6 @@ export default function Command() {
 
     // SET payload for PostMeeage API
     const message: string = setSlackMessage(values.message, values.attachedLink);
-
 
     // DEBUG
     // console.log(postData);
@@ -58,10 +58,16 @@ export default function Command() {
       });
       const messageResult = await web.chat.postMessage({
         channel: prefs.channelId,
+        thread_ts: prefs.threadTs,
         text: message,
         mrkdwn: true,
       });
       // console.log(messageResult);
+
+      // COPY thread_ts
+      if (values.shouldThreadTsCopy && messageResult.ts) {
+        await Clipboard.copy(messageResult.ts);
+      }
 
       // UPLOAD files
       await showToast({
@@ -72,7 +78,7 @@ export default function Command() {
       const filePathList = values.files.filter((file: any) => fs.existsSync(file) && fs.lstatSync(file).isFile());
       if (filePathList.length != 0) {
         const uploadResult = await web.files.uploadV2({
-          // thread_ts: '1223313423434.131321',
+          thread_ts: prefs.threadTs,
           channel_id: prefs.channelId,
           file_uploads: convertFilePaths(filePathList),
         });
@@ -83,8 +89,13 @@ export default function Command() {
         title: "SUCCESS: ",
         message: "送信成功！",
       });
-      popToRoot();
-      closeMainWindow();
+
+      if (values.shouldThreadTsCopy) {
+        openExtensionPreferences();
+      } else {
+        popToRoot();
+        closeMainWindow();
+      }
     } catch (error) {
       console.error(error);
       await showToast({
@@ -125,10 +136,13 @@ export default function Command() {
 
       {/* 入力が必須ではない */}
       <Form.TextField id="attachedLink" title="Link" placeholder="https://..." />
+      <Form.Checkbox id="shouldThreadTsCopy" title="Thread" label="スレッドの位置をクリップボードに保存し拡張機能の設定を開く" />
       <Form.FilePicker id="files" />
 
       <Form.Separator />
-      <Form.Description text="注意: ファイルの送信には時間がかかります" />
+      <Form.Description text="注意点" />
+      <Form.Description text="  - thread ts を設定している限りスレッドに投稿されます！" />
+      <Form.Description text="  - ファイルの送信には時間がかかります！" />
 
       {/* カスタマイズ用サンプル */}
       {/* 
