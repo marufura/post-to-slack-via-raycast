@@ -51,7 +51,7 @@
     {
       "name": "threadTs",
       "type": "textfield",
-      "required": true,
+      "required": false,
       "title": "Slack thread ts",
       "description": "Configure your slack user token.",
       "default": ""

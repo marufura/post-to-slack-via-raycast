@@ -6,6 +6,7 @@ import { WebClient } from '@slack/web-api';
 interface Preferences {
   token: string;
   channelId: string;
+  threadTs: string;
 }
 
 type Arguments = {
@@ -35,10 +36,11 @@ export default async function main(props: LaunchProps<{ arguments: Arguments }>)
   try {
     const result = await web.chat.postMessage({
       channel: prefs.channelId,
+      thread_ts: prefs.threadTs,
       text: message,
       mrkdwn: true,
     });
-    console.log(result);
+    // console.log(result);
     popToRoot({ clearSearchBar: true });
     closeMainWindow();
   } catch (error) {
