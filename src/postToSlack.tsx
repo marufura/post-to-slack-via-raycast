@@ -26,7 +26,7 @@ export default async function main(props: LaunchProps<{ arguments: Arguments }>)
   if(message == ""){
     await showToast({
       style: Toast.Style.Failure,
-      title: "ERROR!",
+      title: "ERROR: ",
       message: "メッセージがありません！",
     });
     return
@@ -45,7 +45,7 @@ export default async function main(props: LaunchProps<{ arguments: Arguments }>)
     console.error(error);
     await showToast({
       style: Toast.Style.Failure,
-      title: "ERROR!",
+      title: "ERROR: ",
       message: "送信に失敗しました",
     });
   }

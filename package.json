@@ -33,6 +33,14 @@
   ],
   "preferences": [
     {
+      "name": "token",
+      "type": "password",
+      "required": true,
+      "title": "Slack User Token",
+      "description": "Configure your slack user token.",
+      "default": ""
+    },
+    {
       "name": "channelId",
       "type": "textfield",
       "required": true,
@@ -41,10 +49,10 @@
       "default": ""
     },
     {
-      "name": "token",
-      "type": "password",
+      "name": "threadTs",
+      "type": "textfield",
       "required": true,
-      "title": "Slack User Token",
+      "title": "Slack thread ts",
       "description": "Configure your slack user token.",
       "default": ""
     }
@@ -53,7 +61,9 @@
     "@raycast/api": "^1.70.3",
     "@slack/web-api": "^7.0.4",
     "axios": "^1.6.8",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "form-data": "^4.0.0",
+    "node-fetch": "^3.3.2"
   },
   "devDependencies": {
     "@raycast/eslint-config": "^1.0.6",
