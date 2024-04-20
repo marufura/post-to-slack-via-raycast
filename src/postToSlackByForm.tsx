@@ -93,7 +93,7 @@ export default function Command() {
       <Form.Description text="Required" />
       <Form.TextArea
         id="message"
-        title="メッセージ"
+        title="Message"
         placeholder="チャンネルへのメッセージ"
         error={nameError}
         onChange={dropNameErrorIfNeeded}
@@ -107,7 +107,6 @@ export default function Command() {
       />
 
       {/* 入力が必須ではない */}
-      <Form.Separator />
       <Form.Description text="Optional" />
       <Form.TextField id="attachedLink" title="Link" placeholder="https://..." />
       {/* <Form.FilePicker id="files" /> */}
