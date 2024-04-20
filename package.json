@@ -21,6 +21,12 @@
         "required": false,
         "type": "text"
       }]
+    },
+    {
+      "name": "postToSlackByForm",
+      "title": "Post to Slack by Form",
+      "description": "Post messages to the slack by using form",
+      "mode": "view"
     }
   ],
   "preferences": [
