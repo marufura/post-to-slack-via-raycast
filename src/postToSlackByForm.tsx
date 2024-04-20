@@ -1,9 +1,8 @@
 import { Form, ActionPanel, Action, Toast, showToast } from "@raycast/api";
 import { closeMainWindow, popToRoot, getPreferenceValues } from "@raycast/api";
-import { useState, useEffect } from "react";
-import fs from "fs";
+import { useState } from "react";
 import { WebClient } from '@slack/web-api';
-
+import fs from "fs";
 
 interface Preferences {
   token: string;
@@ -16,19 +15,8 @@ type FormValues = {
   files: string[];
 };
 
-type SlackPostMessageParams = {
-  channel: string;
-  text: string;
-  mrkdwn: boolean;
-}
-
-function setSlackMessage(message: String, link: String) {
-  return message + "\n" + link;
-}
-
 const prefs = getPreferenceValues<Preferences>();
 const web = new WebClient(prefs.token);
-
 
 export default function Command() {
 
@@ -42,37 +30,66 @@ export default function Command() {
 
   async function handleSubmit(values: FormValues) {
 
-    // CHECK the file 
-    // const files = values.files.filter((file: any) => fs.existsSync(file) && fs.lstatSync(file).isFile());
+    // 
+    if(values.message == ""){
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "ERROR: ",
+        message: "メッセージがありません！",
+      });
+      return
+    }
 
     // SET payload for PostMeeage API
     const message: string = setSlackMessage(values.message, values.attachedLink);
-    const postData: SlackPostMessageParams = {
-      channel: prefs.channelId,
-      text: message,
-      mrkdwn: true,
-    };
+
 
     // DEBUG
-    console.log(postData);
-    console.log(values);
+    // console.log(postData);
+    // console.log(values);
     // console.log(files);
 
-    // TEST
-    try{
-      const result = await web.chat.postMessage({
+    try {
+      // POST message
+      await showToast({
+        style: Toast.Style.Animated,
+        title: "PROGRESS: ",
+        message: "テキストを送信中...",
+      });
+      const messageResult = await web.chat.postMessage({
         channel: prefs.channelId,
         text: message,
         mrkdwn: true,
       });
-      console.log(result);
-      popToRoot({ clearSearchBar: true });
+      // console.log(messageResult);
+
+      // UPLOAD files
+      await showToast({
+        style: Toast.Style.Animated,
+        title: "PROGRESS: ",
+        message: "ファイルを送信中...",
+      });
+      const filePathList = values.files.filter((file: any) => fs.existsSync(file) && fs.lstatSync(file).isFile());
+      if (filePathList.length != 0) {
+        const uploadResult = await web.files.uploadV2({
+          // thread_ts: '1223313423434.131321',
+          channel_id: prefs.channelId,
+          file_uploads: convertFilePaths(filePathList),
+        });
+        // console.log(uploadResult);
+      }
+      await showToast({
+        style: Toast.Style.Success,
+        title: "SUCCESS: ",
+        message: "送信成功！",
+      });
+      popToRoot();
       closeMainWindow();
     } catch (error) {
       console.error(error);
       await showToast({
         style: Toast.Style.Failure,
-        title: "ERROR!",
+        title: "ERROR: ",
         message: "送信に失敗しました",
       });
     }
@@ -90,7 +107,7 @@ export default function Command() {
     >
 
       {/* 入力必須項目 */}
-      <Form.Description text="Required" />
+      <Form.Description text="Slackにメッセージを送信する" />
       <Form.TextArea
         id="message"
         title="Message"
@@ -107,9 +124,11 @@ export default function Command() {
       />
 
       {/* 入力が必須ではない */}
-      <Form.Description text="Optional" />
       <Form.TextField id="attachedLink" title="Link" placeholder="https://..." />
-      {/* <Form.FilePicker id="files" /> */}
+      <Form.FilePicker id="files" />
+
+      <Form.Separator />
+      <Form.Description text="注意: ファイルの送信には時間がかかります" />
 
       {/* カスタマイズ用サンプル */}
       {/* 
@@ -130,4 +149,24 @@ export default function Command() {
        */}
     </Form>
   );
+}
+
+// Sub-functions
+// https://slack.dev/node-slack-sdk/web-api#upload-a-file
+type FileInfoForSlackApi = {
+  file: string;
+  filename: string;
+};
+
+function convertFilePaths(filePathList: string[]): FileInfoForSlackApi[] {
+  return filePathList.map((filePath) => {
+    return {
+      file: filePath,
+      filename: filePath.split('/').pop() || '',
+    };
+  });
+}
+
+function setSlackMessage(message: String, link: String) {
+  return message + "\n" + link;
 }
