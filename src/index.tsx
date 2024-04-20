@@ -1,52 +1,52 @@
-import { closeMainWindow, showToast, Toast, getPreferenceValues, LaunchProps, showHUD } from "@raycast/api";
-import axios from 'axios'
+import { closeMainWindow, showToast, Toast, getPreferenceValues, popToRoot, LaunchProps, showHUD } from "@raycast/api";
+import { WebClient } from '@slack/web-api';
 
-interface Arguments {
-  message: string;
-}
 
+// interface and types
 interface Preferences {
   token: string;
   channelId: string;
 }
 
-interface SlackPostMessageParams {
-  channel: String;
-  text: String;
+type Arguments = {
+  message: string;
 }
+
+// Slack API
+const prefs = getPreferenceValues<Preferences>();
+const web = new WebClient(prefs.token);
 
 export default async function main(props: LaunchProps<{ arguments: Arguments }>) {
 
+  // PREPARE data for slack API
   const prefs = getPreferenceValues<Preferences>();
   const message = props.arguments.message;
-  const postData: SlackPostMessageParams = {
-    channel: prefs.channelId,
-    text: message,
-  };
+  // console.log(message);
 
-  console.log(message);
-
-  axios.post('https://slack.com/api/chat.postMessage', postData, {
-    headers: {
-      'Authorization': `Bearer ` + prefs.token,
-      'Content-Type': 'application/json; charset=utf-8',
-    },
-  }).then(response => {
-      console.log('Message posted successfully:', response.data);
-      showToast({
-        style: Toast.Style.Success,
-        title: "Fail to send messages!!",
-        message: "Check your ID or token are correct.",
-      });
-      showHUD("SUCCESS");
-    })
-    .catch(error => {
-      console.error('An error occurred:', error);
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Fail to send messages!!",
-        message: "Check your ID or token are correct.",
-      });
-      showHUD("ERROR");
+  if(message == ""){
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "ERROR!",
+      message: "メッセージがありません！",
     });
+    return
+  }
+
+  try {
+    const result = await web.chat.postMessage({
+      channel: prefs.channelId,
+      text: message,
+      mrkdwn: true,
+    });
+    console.log(result);
+    popToRoot({ clearSearchBar: true });
+    closeMainWindow();
+  } catch (error) {
+    console.error(error);
+    await showToast({
+      style: Toast.Style.Failure,
+      title: "ERROR!",
+      message: "送信に失敗しました",
+    });
+  }
 }

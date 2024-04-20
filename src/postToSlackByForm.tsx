@@ -1,9 +1,14 @@
-import { Form, ActionPanel, Action, showToast } from "@raycast/api";
+import { Form, ActionPanel, Action, Toast, showToast } from "@raycast/api";
 import { closeMainWindow, popToRoot, getPreferenceValues } from "@raycast/api";
 import { useState, useEffect } from "react";
 import fs from "fs";
-import axios from 'axios';
+import { WebClient } from '@slack/web-api';
 
+
+interface Preferences {
+  token: string;
+  channelId: string;
+}
 
 type FormValues = {
   message: string;
@@ -11,20 +16,19 @@ type FormValues = {
   files: string[];
 };
 
-interface Preferences {
-  token: string;
-  channelId: string;
-}
-
-interface SlackPostMessageParams {
-  channel: String;
-  text: String;
+type SlackPostMessageParams = {
+  channel: string;
+  text: string;
   mrkdwn: boolean;
 }
 
 function setSlackMessage(message: String, link: String) {
   return message + "\n" + link;
 }
+
+const prefs = getPreferenceValues<Preferences>();
+const web = new WebClient(prefs.token);
+
 
 export default function Command() {
 
@@ -36,16 +40,13 @@ export default function Command() {
     }
   }
 
-  function handleSubmit(values: FormValues) {
+  async function handleSubmit(values: FormValues) {
 
     // CHECK the file 
     // const files = values.files.filter((file: any) => fs.existsSync(file) && fs.lstatSync(file).isFile());
 
-    // LOAD preferences
-    const prefs = getPreferenceValues<Preferences>();
-
     // SET payload for PostMeeage API
-    const message: String = setSlackMessage(values.message, values.attachedLink);
+    const message: string = setSlackMessage(values.message, values.attachedLink);
     const postData: SlackPostMessageParams = {
       channel: prefs.channelId,
       text: message,
@@ -57,22 +58,24 @@ export default function Command() {
     console.log(values);
     // console.log(files);
 
-    // POST to Slack
-    axios.post('https://slack.com/api/chat.postMessage', postData, {
-      headers: {
-        'Authorization': `Bearer ` + prefs.token,
-        'Content-Type': 'application/json; charset=utf-8',
-      },
-    }).then(response => {
-      console.log('Message posted successfully:', response.data);
+    // TEST
+    try{
+      const result = await web.chat.postMessage({
+        channel: prefs.channelId,
+        text: message,
+        mrkdwn: true,
+      });
+      console.log(result);
       popToRoot({ clearSearchBar: true });
       closeMainWindow();
-    })
-      .catch(error => {
-        console.error('An error occurred:', error);
-        popToRoot({ clearSearchBar: true });
-        closeMainWindow();
+    } catch (error) {
+      console.error(error);
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "ERROR!",
+        message: "送信に失敗しました",
       });
+    }
   }
 
   return (
