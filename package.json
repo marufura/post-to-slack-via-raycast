@@ -53,7 +53,7 @@
       "type": "textfield",
       "required": false,
       "title": "Slack thread ts",
-      "description": "Configure your slack user token.",
+      "description": "Configure thread_ts if you need.",
       "default": ""
     }
   ],

@@ -136,7 +136,7 @@ export default function Command() {
 
       {/* 入力が必須ではない */}
       <Form.TextField id="attachedLink" title="Link" placeholder="https://..." />
-      <Form.Checkbox id="shouldThreadTsCopy" title="Thread" label="スレッドの位置をクリップボードに保存し拡張機能の設定を開く" />
+      <Form.Checkbox id="shouldThreadTsCopy" title="Thread" label="スレッドの位置をクリップボードに保存し拡張機能の設定を開く" defaultValue={false}/>
       <Form.FilePicker id="files" />
 
       <Form.Separator />
