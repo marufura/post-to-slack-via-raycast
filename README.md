@@ -9,16 +9,16 @@ Slackを読む時間と書く時間を完全に分離します。
 ### Slack Appを作成しTokenを取得する
 
 [この記事](https://zenn.dev/kou_pg_0131/articles/slack-api-post-message)を参考にRaycastにて使用するAppを作成し`User OAuth Token`を取得する。
-
-### 投稿したいSlackのチャンネルのIDを取得する
-
-投稿したいSlackチャンネルの`チャンネル情報`のページの最下部にチャンネルIDが記載されているのでコピーする。
 ただし権限は以下のようにする。
 
 ```
 chat:write
 files:write
 ```
+
+### 投稿したいSlackのチャンネルのIDを取得する
+
+投稿したいSlackチャンネルの`チャンネル情報`のページの最下部にチャンネルIDが記載されているのでコピーする。
 
 ![](assets/readme-1.png)
 
@@ -39,4 +39,4 @@ raycastで`Post To Slack`と入力
 
 - [Raycast API](https://developers.raycast.com/api-reference/)
 - [Slack API](https://api.slack.com/)
-    - [今回使っているメッセージ投稿のAPI](https://api.slack.com/methods/chat.postMessage)
+    - [postMessage API](https://api.slack.com/methods/chat.postMessage)
