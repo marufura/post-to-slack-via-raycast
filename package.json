@@ -19,7 +19,7 @@
         {
           "name": "message",
           "placeholder": "message",
-          "required": false,
+          "required": true,
           "type": "text"
         }
       ]
@@ -29,6 +29,20 @@
       "title": "Post to Slack by Form",
       "description": "Post messages to the slack by using form",
       "mode": "view"
+    },
+    {
+      "name": "getThreadTsFromMessageLink",
+      "title": "Get thread_ts from slack message url",
+      "description": "Get thread_ts from slack message url",
+      "mode": "no-view",
+      "arguments": [
+        {
+          "name": "url",
+          "placeholder": "URL",
+          "required": true,
+          "type": "text"
+        }
+      ]
     }
   ],
   "preferences": [
